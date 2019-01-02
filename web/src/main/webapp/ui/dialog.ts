@@ -447,42 +447,34 @@ export class Dialog extends DialogBase {
      * @param toolTip:  Help message to show as a tool-tip.
      * @return       A reference to the select html select field.
      */
-    public addSelectField(fieldName: string, labelText: string,
+public addSelectField(fieldName: string, labelText: string,
                           options: string[], value: string,
-                          toolTip: string): HTMLSelectElement {
+                          toolTip: string): HTMLInputElement {
         const sortOptions = cloneArray(options);
         sortOptions.sort();
 
         const fieldDiv = this.createRowContainer(fieldName, labelText, toolTip);
-        const select = document.createElement("select");
-        select.tabIndex = this.tabIndex++;
-        select.style.flexGrow = "100";
-        select.id = makeId(fieldName);
-        fieldDiv.appendChild(select);
+        const input: HTMLInputElement = document.createElement("input");
+        input.tabIndex = this.tabIndex++;
+        input.style.flexGrow = "100";
+        input.setAttribute("list" , makeId(fieldName));
+		
+		fieldDiv.appendChild(input);
+		
+		const datalist = document.createElement("datalist");
+		datalist.id = makeId(fieldName);
+		input.appendChild(datalist)
+		
         sortOptions.forEach((option) => {
             const optionElement = document.createElement("option");
             optionElement.value = option;
             optionElement.text = option;
-            select.add(optionElement);
-        });
-
-        if (value != null) {
-            let i;
-            for (i = 0; i < sortOptions.length; i++) {
-                if (sortOptions[i] === value) {
-                    select.selectedIndex = i;
-                    break;
-                }
-            }
-            if (i === sortOptions.length)
-                throw new Error(`Given default value ${value} not found in options.`);
-        }
-        this.fields.set(fieldName, {html: select, type: FieldKind.String });
-        if (value != null)
-            select.value = value;
-        return select;
-    }
-
+            datalist.appendChild(optionElement);
+		    
+	    });
+                return input;
+  
+       }
     /**
      * Make the specified field visible or invisible.
      * @param {string} labelText   Label associated to the field.
