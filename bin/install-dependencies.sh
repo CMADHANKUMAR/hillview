@@ -10,6 +10,14 @@ if [[ ! -d "$mydir" ]]; then mydir="$PWD"; fi
 source $mydir/lib.sh
 
 echo "Installing programs needed to build"
+
+if [ $(which curl 2>/dev/null) ]; then
+  echo "Curl is installed already"
+else
+  echo "Installing curl"
+  ${SUDO} ${INSTALL} install curl -y
+fi
+
 case "$OSTYPE" in
     linux*)
     # Location where node.js version 11 resides.
